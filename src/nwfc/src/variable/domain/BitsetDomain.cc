@@ -1,6 +1,7 @@
 #include "BitsetDomain.hh"
 
 #include <algorithm>
+#include <stdexcept>
 
 namespace nwfc {
 
@@ -30,6 +31,24 @@ bool is_empty(const BitsetDomain& domain) {
 
 void restore(BitsetDomain& domain, const BitsetDomain::Memento& memento) {
 	domain.bits = memento.bits;
+}
+
+BitsetDomain::Memento assign_value(BitsetDomain& domain, std::size_t index) {
+	BitsetDomain::Memento memento;
+	memento.bits = domain.bits;
+	for (std::size_t i = 0; i < domain.bits.size(); ++i) {
+		domain.bits[i] = (i == index);
+	}
+	return memento;
+}
+
+std::size_t get_assigned_value(const BitsetDomain& domain) {
+	for (std::size_t i = 0; i < domain.bits.size(); ++i) {
+		if (domain.bits[i]) {
+			return i;
+		}
+	}
+	throw std::runtime_error("Domain is not decided");
 }
 
 } // namespace nwfc
