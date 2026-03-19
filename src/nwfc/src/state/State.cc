@@ -19,6 +19,7 @@ bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
 
 	// update assigned vector
 	state.assigned[var] = true;
+	state.affectation.push_back(var);
 
 	// check if any domain has been emptied
 	bool backtrack = false;
@@ -29,8 +30,11 @@ bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
 		}
 	}
 
-	if (backtrack) {
-		state.assigned[var] = false;
+	std::size_t cur_var = var;
+	std::size_t cur_val = val;
+	while (backtrack) {
+		state.assigned[cur_var] = false;
+		state.affectation.pop_back();
 		// revert memento
 		for(std::size_t i = memento.domain_mementos.size() ; i > 0 ; --i) {
 			DomainMementoIdx const &memIdx = memento.domain_mementos[i-1];
@@ -39,7 +43,19 @@ bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
 		state.mementos.pop_back();
 
 		// remove value from domain in previous memento layer
-		state.mementos.back().domain_mementos.push_back({ var, remove_value(state.domains[var], val)});
+		state.mementos.back().domain_mementos.push_back({ cur_var, remove_value(state.domains[cur_var], cur_val)});
+
+		if (is_empty(state.domains[cur_var])) {
+			if (state.affectation.empty()) {
+				// no solution
+				return true;
+			}
+			cur_var = state.affectation.back();
+			cur_val = get_assigned_value(state.domains[cur_var]);
+			backtrack = true;
+		} else {
+			backtrack = false;
+		}
 	}
 
 	return backtrack;

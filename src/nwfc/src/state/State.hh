@@ -21,6 +21,7 @@ struct State {
 	}
 	std::vector<Domain> domains;
 	std::vector<bool> assigned;
+	std::vector<std::size_t> affectation;
 	std::vector<std::unique_ptr<Constraint>> constraints;
 
 	// mementos
