@@ -10,7 +10,7 @@ bool is_assigned(State const &state, std::size_t var) {
 	return state.assigned[var];
 }
 
-bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
+void progress(State &state, std::size_t var, std::size_t val) {
 	INFO_LOG << "Progressing with variable " << var << " = " << val << std::endl;
 	state.init();
 	// push memento
@@ -30,7 +30,9 @@ bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
 	for(auto &constraint: state.constraints) {
 		constraint->propagate(state, var);
 	}
+}
 
+bool backtrack(State &state, std::size_t var, std::size_t val) {
 	// check if any domain has been emptied
 	bool backtrack = false;
 	for (std::size_t i = 0 ; i < state.domains.size() ; ++ i) {
@@ -72,6 +74,11 @@ bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
 	}
 
 	return backtrack;
+}
+
+bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
+	progress(state, var, val);
+	return backtrack(state, var, val);
 }
 
 std::size_t greedy_pick_variable(State const &state) {

@@ -30,6 +30,8 @@ struct State {
 };
 
 bool is_assigned(State const &state, std::size_t var);
+void progress(State &state, std::size_t var, std::size_t val);
+bool backtrack(State &state, std::size_t var, std::size_t val);
 bool progress_and_backtrack(State &state, std::size_t var, std::size_t val);
 
 // greedy
