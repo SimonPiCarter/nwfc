@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "constraint/Constraint.hh"
+#include "state/State.hh"
 
 namespace nwfc {
 
