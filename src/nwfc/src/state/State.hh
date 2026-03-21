@@ -5,6 +5,7 @@
 
 #include <list>
 #include <memory>
+#include <random>
 
 namespace nwfc {
 
@@ -16,6 +17,7 @@ struct StateMemento {
 struct State {
 	void init() {
 		if (assigned.size() < domains.size()) {
+			srand(42);
 			assigned.resize(domains.size(), false);
 			mementos.resize(1, {0, {}});
 		}
