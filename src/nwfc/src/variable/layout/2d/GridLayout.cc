@@ -46,5 +46,14 @@ void display_grid(GridLayout const &layout, State const &state) {
 		INFO_LOG << "\n";
 	}
 }
+void display_grid_names(GridLayout const &layout, State const &state) {
+    for(std::size_t y = 0; y < layout.height; ++y) {
+		for(std::size_t x = 0; x < layout.width; ++x) {
+			std::size_t index = layout.get_index(x, y);
+			INFO_LOG<<state.domains[index].id<<" ";
+		}
+		INFO_LOG << "\n";
+	}
+}
 
 }

@@ -19,11 +19,13 @@ struct State {
 		if (assigned.size() < domains.size()) {
 			srand(42);
 			assigned.resize(domains.size(), false);
+			rank.resize(domains.size(), 0);
 			mementos.resize(1, {0, {}});
 		}
 	}
 	std::vector<Domain> domains;
 	std::vector<bool> assigned;
+	std::vector<std::size_t> rank;
 	std::vector<std::size_t> affectation;
 	std::vector<std::unique_ptr<Constraint>> constraints;
 

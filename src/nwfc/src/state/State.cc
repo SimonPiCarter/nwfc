@@ -7,6 +7,9 @@
 namespace nwfc {
 
 bool is_assigned(State const &state, std::size_t var) {
+	if (state.assigned[var] != is_decided(state.domains[var])) {
+		throw std::runtime_error("Assigned status is inconcistent for var "+std::to_string(var));
+	}
 	return state.assigned[var];
 }
 
@@ -21,9 +24,10 @@ void progress(State &state, std::size_t var, std::size_t val) {
 
 	auto &memento = state.mementos.back();
 	DEBUG_LOG<<"Memento idx: "<<memento.index<<std::endl;
-	memento.domain_mementos.push_back({var, assign_value(state.domains[var], val)});
+	assign_value(state.domains[var], val);
 	// update assigned vector
 	state.assigned[var] = true;
+	state.rank[var] = state.affectation.size();
 	state.affectation.push_back(var);
 
 	// propagate
@@ -49,7 +53,9 @@ bool backtrack(State &state, std::size_t var, std::size_t val) {
 
 		auto &last_memento = state.mementos.back();
 		DEBUG_LOG<<"Memento idx: "<<last_memento.index<<std::endl;
+		unnassign_value(state.domains[cur_var]);
 		state.assigned[cur_var] = false;
+		state.rank[cur_var] = 0;
 		state.affectation.pop_back();
 		// revert memento
 		for(std::size_t i = last_memento.domain_mementos.size() ; i > 0 ; --i) {
@@ -59,7 +65,8 @@ bool backtrack(State &state, std::size_t var, std::size_t val) {
 		state.mementos.pop_back();
 
 		// remove value from domain in previous memento layer
-		state.mementos.back().domain_mementos.push_back({ cur_var, remove_value(state.domains[cur_var], cur_val)});
+		std::size_t explaination = state.affectation.size()>0?state.affectation.back():state.domains.size(); // backtrack in that case
+		state.mementos.back().domain_mementos.push_back({ cur_var, remove_value(state.domains[cur_var], cur_val, explaination)});
 
 		if (is_empty(state.domains[cur_var])) {
 			if (state.affectation.empty()) {

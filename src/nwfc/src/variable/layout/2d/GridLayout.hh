@@ -31,5 +31,6 @@ struct GridLayout {
 std::vector<CompatibilityBitset *> create_man_distance_incompatibilty_constraint(GridLayout const &layout, int distance, std::size_t value_index, std::vector<std::size_t> incompatibilities);
 
 void display_grid(GridLayout const &layout, State const &state);
+void display_grid_names(GridLayout const &layout, State const &state);
 
 }

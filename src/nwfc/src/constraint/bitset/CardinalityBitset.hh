@@ -44,19 +44,39 @@ struct CardinalityBitset : public Constraint {
 		auto cur_value = get_assigned_value(state.domains[variable_assigned]);
 		auto cur_count = count(state);
 		if (upper_bound && cur_count >= *upper_bound) {
+			// Compute explainaion: Last var that was assigned to the value
+			std::size_t explaination = 0;
+			std::size_t rank = 0;
+			for(std::size_t var : variables) {
+				if (state.assigned[var] && state.rank[var] > rank &&
+					get_assigned_value(state.domains[var]) == value_index) {
+					explaination = var;
+					rank = state.rank[var];
+				}
+			}
 			for(std::size_t var : variables) {
 				if (!is_assigned(state, var)) {
 					BitsetDomain &domain = state.domains[var];
-					memento.domain_mementos.push_back({var, remove_value(domain, value_index)});
+					memento.domain_mementos.push_back({var, remove_value(domain, value_index, explaination)});
 				}
 			}
 		}
 
 		if (lower_bound && count_possible(state) + cur_count <= *lower_bound) {
+			// Compute explainaion: Last var that was assigned to a different value with the value in its domain
+			std::size_t explaination = 0;
+			std::size_t rank = 0;
+			for(std::size_t var : variables) {
+				if (state.assigned[var] && state.rank[var] > rank &&
+					get_assigned_value(state.domains[var]) != value_index) {
+					explaination = var;
+					rank = state.rank[var];
+				}
+			}
 			for(std::size_t var : variables) {
 				if (!is_assigned(state, var)) {
 					BitsetDomain &domain = state.domains[var];
-					memento.domain_mementos.push_back({var, remove_all_but_value(domain, value_index)});
+					memento.domain_mementos.push_back({var, remove_all_but_value(domain, value_index, explaination)});
 				}
 			}
 		}

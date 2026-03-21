@@ -29,7 +29,7 @@ struct AllDifferentBitset : public Constraint {
 		for (std::size_t i = 0; i < variable_bitset.size(); ++i) {
 			if (variable_bitset[i] && i != variable_assigned) {
 				BitsetDomain &domain = state.domains[i];
-				memento.domain_mementos.push_back({i, remove_value(domain, assigned_value)});
+				memento.domain_mementos.push_back({i, remove_value(domain, assigned_value, variable_assigned)});
 			}
 		}
 	}

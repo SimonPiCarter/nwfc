@@ -32,7 +32,7 @@ struct CompatibilityBitset : public Constraint {
 			}
 			if (!is_assigned(state, incompatibility.variable_index)) {
 				BitsetDomain &domain = state.domains[incompatibility.variable_index];
-				memento.domain_mementos.push_back({incompatibility.variable_index, remove_value(domain, incompatibility.incompatible_value)});
+				memento.domain_mementos.push_back({incompatibility.variable_index, remove_value(domain, incompatibility.incompatible_value, variable_assigned)});
 			}
 		}
 	}

@@ -25,10 +25,10 @@ TEST(ProgressBacktrack, progress) {
 		EXPECT_FALSE(backtrack);
 	}
 
-	EXPECT_EQ(state.domains[0].bits, std::vector<bool>({true, false, false}));
-	EXPECT_EQ(state.domains[1].bits, std::vector<bool>({false, true, true}));
-	EXPECT_EQ(state.domains[2].bits, std::vector<bool>({false, true, true}));
-	EXPECT_EQ(state.domains[3].bits, std::vector<bool>({true, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[0]), std::vector<bool>({true, false, false}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[1]), std::vector<bool>({false, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[2]), std::vector<bool>({false, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[3]), std::vector<bool>({true, true, true}));
 
 	{
 		std::size_t var = greedy_pick_variable(state);
@@ -39,10 +39,10 @@ TEST(ProgressBacktrack, progress) {
 		EXPECT_FALSE(backtrack);
 	}
 
-	EXPECT_EQ(state.domains[0].bits, std::vector<bool>({true, false, false}));
-	EXPECT_EQ(state.domains[1].bits, std::vector<bool>({false, true, false}));
-	EXPECT_EQ(state.domains[2].bits, std::vector<bool>({false, false, true}));
-	EXPECT_EQ(state.domains[3].bits, std::vector<bool>({true, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[0]), std::vector<bool>({true, false, false}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[1]), std::vector<bool>({false, true, false}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[2]), std::vector<bool>({false, false, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[3]), std::vector<bool>({true, true, true}));
 }
 
 TEST(ProgressBacktrack, progress_and_backtrack) {
@@ -64,10 +64,10 @@ TEST(ProgressBacktrack, progress_and_backtrack) {
 		EXPECT_TRUE(backtrack);
 	}
 
-	EXPECT_EQ(state.domains[0].bits, std::vector<bool>({false, true, true}));
-	EXPECT_EQ(state.domains[1].bits, std::vector<bool>({true, true, true}));
-	EXPECT_EQ(state.domains[2].bits, std::vector<bool>({true, true, true}));
-	EXPECT_EQ(state.domains[3].bits, std::vector<bool>({true, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[0]), std::vector<bool>({false, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[1]), std::vector<bool>({true, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[2]), std::vector<bool>({true, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[3]), std::vector<bool>({true, true, true}));
 
 	{
 		std::size_t var = greedy_pick_variable(state);
@@ -78,10 +78,10 @@ TEST(ProgressBacktrack, progress_and_backtrack) {
 		EXPECT_FALSE(backtrack);
 	}
 
-	EXPECT_EQ(state.domains[0].bits, std::vector<bool>({false, true, false}));
-	EXPECT_EQ(state.domains[1].bits, std::vector<bool>({true, false, true}));
-	EXPECT_EQ(state.domains[2].bits, std::vector<bool>({true, false, true}));
-	EXPECT_EQ(state.domains[3].bits, std::vector<bool>({true, true, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[0]), std::vector<bool>({false, true, false}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[1]), std::vector<bool>({true, false, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[2]), std::vector<bool>({true, false, true}));
+	EXPECT_EQ(nwfc::effective_domain(state.domains[3]), std::vector<bool>({true, true, true}));
 }
 
 TEST(ProgressBacktrack, progress_loop) {
@@ -103,10 +103,10 @@ TEST(ProgressBacktrack, progress_loop) {
 		EXPECT_TRUE(!backtrack);
 	}
 
-	EXPECT_TRUE(state.domains[0].bits == std::vector<bool>({true, false, false}));
-	EXPECT_TRUE(state.domains[1].bits == std::vector<bool>({false, false, true}));
-	EXPECT_TRUE(state.domains[2].bits == std::vector<bool>({false, false, true}));
-	EXPECT_TRUE(state.domains[3].bits == std::vector<bool>({true, true, true}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[0]) == std::vector<bool>({true, false, false}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[1]) == std::vector<bool>({false, false, true}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[2]) == std::vector<bool>({false, false, true}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[3]) == std::vector<bool>({true, true, true}));
 
 	{
 		std::size_t var = greedy_pick_variable(state);
@@ -117,10 +117,10 @@ TEST(ProgressBacktrack, progress_loop) {
 		EXPECT_TRUE(backtrack);
 	}
 
-	EXPECT_TRUE(state.domains[0].bits == std::vector<bool>({false, true, true}));
-	EXPECT_TRUE(state.domains[1].bits == std::vector<bool>({true, true, true}));
-	EXPECT_TRUE(state.domains[2].bits == std::vector<bool>({true, true, true}));
-	EXPECT_TRUE(state.domains[3].bits == std::vector<bool>({true, true, true}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[0]) == std::vector<bool>({false, true, true}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[1]) == std::vector<bool>({true, true, true}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[2]) == std::vector<bool>({true, true, true}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[3]) == std::vector<bool>({true, true, true}));
 
 
 	std::size_t var = greedy_pick_variable(state);
@@ -130,10 +130,10 @@ TEST(ProgressBacktrack, progress_loop) {
 		var = greedy_pick_variable(state);
 	}
 
-	EXPECT_TRUE(state.domains[0].bits == std::vector<bool>({false, true, false}));
-	EXPECT_TRUE(state.domains[1].bits == std::vector<bool>({true, false, false}));
-	EXPECT_TRUE(state.domains[2].bits == std::vector<bool>({false, false, true}));
-	EXPECT_TRUE(state.domains[3].bits == std::vector<bool>({true, false, false}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[0]) == std::vector<bool>({false, true, false}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[1]) == std::vector<bool>({true, false, false}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[2]) == std::vector<bool>({false, false, true}));
+	EXPECT_TRUE(nwfc::effective_domain(state.domains[3]) == std::vector<bool>({true, false, false}));
 
 }
 
