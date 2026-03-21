@@ -21,5 +21,11 @@ private:
     static NullLogger instance;
 };
 
+//#define DEBUG_LEVEL
+
+#ifndef DEBUG_LEVEL
 #define DEBUG_LOG NullLogger::get_instance()
+#else
+#define DEBUG_LOG std::cerr
+#endif
 #define INFO_LOG std::cerr
