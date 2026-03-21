@@ -3,6 +3,7 @@
 
 #include "variable/domain/BitsetDomain.hh"
 #include "state/State.hh"
+#include "pickers/value/WeightBasedValuePicker.hh"
 #include "constraint/bitset/AllDifferentBitset.hh"
 #include "constraint/bitset/CompatibilityBitset.hh"
 #include "constraint/bitset/CardinalityBitset.hh"
@@ -20,7 +21,7 @@ int main() {
 	}
 	state.init();
 
-	for (auto constraint : create_man_distance_incompatibilty_constraint(layout, 2, 2, {2})) {
+	for (auto constraint : create_man_distance_incompatibilty_constraint(layout, 3, 2, {2})) {
 		state.constraints.emplace_back(constraint);
 	}
 	// for (auto constraint : create_man_distance_incompatibilty_constraint(layout, 4, 1, {1})) {
@@ -31,17 +32,20 @@ int main() {
 	// state.constraints.emplace_back(nwfc::CardinalityBitset::newLowerCardinality(all_vars, 5, 20));
 	state.constraints.emplace_back(nwfc::CardinalityBitset::newLowerCardinality(all_vars, 2, 10));
 
+	nwfc::WeightBasedValuePicker value_picker(9);
+	value_picker.set_weight(2, 5);
+
 	std::size_t deepness = 0;
 	std::size_t var = greedy_pick_variable(state);
 	while (var < layout.size()) {
 		deepness = std::max(deepness, state.affectation.size());
-		std::size_t val = greedy_pick_value(state, var);
+		std::size_t val = value_picker.pick(state, var);
 		progress(state, var, val);
 		nwfc::display_grid(layout, state);
 		bool bt = backtrack(state, var, val);
-		// for(auto dom : state.domains) {
-		// 	display_domain(INFO_LOG, dom);
-		// }
+		for(auto dom : state.domains) {
+			display_domain(DEBUG_LOG, dom);
+		}
 		var = greedy_pick_variable(state);
 		INFO_LOG<<"deepeness = "<<deepness<<"/"<<state.domains.size()<<std::endl;
 	}
