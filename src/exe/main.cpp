@@ -21,6 +21,8 @@ int main() {
 	}
 	state.init();
 
+	display_grid_names(layout, state);
+
 	for (auto constraint : create_man_distance_incompatibilty_constraint(layout, 3, 2, {2})) {
 		state.constraints.emplace_back(constraint);
 	}
@@ -30,7 +32,7 @@ int main() {
 	// state.constraints.emplace_back(new nwfc::CompatibilityBitset(0, 0, {{1,0}, {1,1}, {2,0}, {2,1}}));
 	// state.constraints.emplace_back(nwfc::CardinalityBitset::newUpperCardinality(all_vars, 7, 2));
 	// state.constraints.emplace_back(nwfc::CardinalityBitset::newLowerCardinality(all_vars, 5, 20));
-	state.constraints.emplace_back(nwfc::CardinalityBitset::newLowerCardinality(all_vars, 2, 10));
+	state.constraints.emplace_back(nwfc::CardinalityBitset::newLowerCardinality(all_vars, 2, 11));
 
 	nwfc::WeightBasedValuePicker value_picker(9);
 	value_picker.set_weight(2, 5);
@@ -41,11 +43,11 @@ int main() {
 		deepness = std::max(deepness, state.affectation.size());
 		std::size_t val = value_picker.pick(state, var);
 		progress(state, var, val);
-		nwfc::display_grid(layout, state);
-		bool bt = backtrack(state, var, val);
+		// nwfc::display_grid(layout, state);
 		for(auto dom : state.domains) {
-			display_domain(DEBUG_LOG, dom);
+			// display_domain_detailed(DEBUG_LOG, dom);
 		}
+		bool bt = backjump(state);
 		var = greedy_pick_variable(state);
 		INFO_LOG<<"deepeness = "<<deepness<<"/"<<state.domains.size()<<std::endl;
 	}

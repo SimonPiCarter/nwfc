@@ -2,6 +2,7 @@
 
 #include <random>
 #include <stdexcept>
+#include <set>
 #include "utils/log/Log.hh"
 
 namespace nwfc {
@@ -36,7 +37,53 @@ void progress(State &state, std::size_t var, std::size_t val) {
 	}
 }
 
-bool backtrack(State &state, std::size_t var, std::size_t val) {
+
+std::set<std::size_t> explainations(State const &state) {
+	std::set<std::size_t> set;
+	for (std::size_t i = 0 ; i < state.domains.size() ; ++ i) {
+		if (is_empty(state.domains[i])) {
+			set.insert(state.domains[i].explaination.begin(), state.domains[i].explaination.end());
+		}
+	}
+	return set;
+}
+
+std::size_t get_jump(State const &state) {
+	std::set<std::size_t> set = explainations(state);
+	if (set.size() == 0) {
+		return state.affectation.size()-1;
+	}
+	return *(set.rbegin());
+}
+
+std::size_t get_conflict(State const &state) {
+	std::set<std::size_t> set = explainations(state);
+	if (set.size() <= 1) {
+		return state.affectation.size()-1;
+	}
+	return *(++set.rbegin());
+}
+
+void atomic_batcktrack(State &state) {
+	std::size_t cur_var = state.affectation.back();
+	std::size_t cur_val = get_assigned_value(state.domains[cur_var]);
+	INFO_LOG << "Backtracking with variable " << cur_var << " = " << cur_val << std::endl;
+
+	auto &last_memento = state.mementos.back();
+	DEBUG_LOG<<"Memento idx: "<<last_memento.index<<std::endl;
+	unnassign_value(state.domains[cur_var]);
+	state.assigned[cur_var] = false;
+	state.rank[cur_var] = 0;
+	state.affectation.pop_back();
+	// revert memento
+	for(std::size_t i = last_memento.domain_mementos.size() ; i > 0 ; --i) {
+		DomainMementoIdx const &memIdx = last_memento.domain_mementos[i-1];
+		restore(state.domains[memIdx.index], memIdx.memento);
+	}
+	state.mementos.pop_back();
+}
+
+bool backtrack(State &state) {
 	// check if any domain has been emptied
 	bool backtrack = false;
 	for (std::size_t i = 0 ; i < state.domains.size() ; ++ i) {
@@ -46,26 +93,13 @@ bool backtrack(State &state, std::size_t var, std::size_t val) {
 		}
 	}
 
-	std::size_t cur_var = var;
-	std::size_t cur_val = val;
 	while (backtrack) {
-		INFO_LOG << "Backtracking with variable " << cur_var << " = " << cur_val << std::endl;
-
-		auto &last_memento = state.mementos.back();
-		DEBUG_LOG<<"Memento idx: "<<last_memento.index<<std::endl;
-		unnassign_value(state.domains[cur_var]);
-		state.assigned[cur_var] = false;
-		state.rank[cur_var] = 0;
-		state.affectation.pop_back();
-		// revert memento
-		for(std::size_t i = last_memento.domain_mementos.size() ; i > 0 ; --i) {
-			DomainMementoIdx const &memIdx = last_memento.domain_mementos[i-1];
-			restore(state.domains[memIdx.index], memIdx.memento);
-		}
-		state.mementos.pop_back();
+		std::size_t cur_var = state.affectation.back();
+		std::size_t cur_val = get_assigned_value(state.domains[cur_var]);
+		std::size_t explaination = get_conflict(state);
+		atomic_batcktrack(state);
 
 		// remove value from domain in previous memento layer
-		std::size_t explaination = state.affectation.size()>0?state.affectation.back():state.domains.size(); // backtrack in that case
 		state.mementos.back().domain_mementos.push_back({ cur_var, remove_value(state.domains[cur_var], cur_val, explaination)});
 
 		if (is_empty(state.domains[cur_var])) {
@@ -73,8 +107,6 @@ bool backtrack(State &state, std::size_t var, std::size_t val) {
 				// no solution
 				return true;
 			}
-			cur_var = state.affectation.back();
-			cur_val = get_assigned_value(state.domains[cur_var]);
 		} else {
 			break;
 		}
@@ -83,9 +115,47 @@ bool backtrack(State &state, std::size_t var, std::size_t val) {
 	return backtrack;
 }
 
+bool backjump(State &state) {
+	// check if any domain has been emptied
+	bool backtrack = false;
+	for (std::size_t i = 0 ; i < state.domains.size() ; ++ i) {
+		if (is_empty(state.domains[i])) {
+			backtrack = true;
+			break;
+		}
+	}
+
+	std::size_t jump = state.affectation.size();
+	if (backtrack) {
+		jump = get_jump(state);
+	}
+	DEBUG_LOG<<"jump: "<<jump<<std::endl;
+
+	while (state.affectation.size() > jump) {
+		std::size_t cur_var = state.affectation.back();
+		std::size_t cur_val = get_assigned_value(state.domains[cur_var]);
+		std::size_t explaination = get_conflict(state);
+		DEBUG_LOG<<"explaination: "<<explaination<<std::endl;
+		atomic_batcktrack(state);
+
+		// remove value from domain in previous memento layer
+		state.mementos.back().domain_mementos.push_back({ cur_var, remove_value(state.domains[cur_var], cur_val, explaination)});
+
+		if (is_empty(state.domains[cur_var]) && state.affectation.empty()) {
+			// no solution
+			return true;
+		}
+	}
+
+	if(backtrack) {
+		backjump(state);
+	}
+	return backtrack;
+}
+
 bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
 	progress(state, var, val);
-	return backtrack(state, var, val);
+	return backtrack(state);
 }
 
 std::size_t greedy_pick_variable(State const &state) {

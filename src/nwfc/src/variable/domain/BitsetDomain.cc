@@ -118,8 +118,11 @@ void display_domain(std::ostream &os, BitsetDomain const &domain) {
 void display_domain_detailed(std::ostream &os, BitsetDomain const &domain) {
 	os << domain.id << ": ";
 	display_bitset(os, domain.bits);
+	if (is_decided(domain)) {
+		os<<" = "<<domain.value;
+	}
 	for (std::size_t i = 0 ; i < domain.explaination.size() ; ++ i) {
-		if (!domain.bits[i] && domain.explaination[i] > 0) {
+		if (!domain.bits[i]) {
 			os <<"\n\t"<<i<<": "<<domain.explaination[i];
 		}
 	}

@@ -4,6 +4,7 @@
 #include <vector>
 #include <optional>
 #include "constraint/Constraint.hh"
+#include "utils/log/Log.hh"
 #include "state/State.hh"
 
 namespace nwfc {
@@ -62,20 +63,22 @@ struct CardinalityBitset : public Constraint {
 			}
 		}
 
-		if (lower_bound && count_possible(state) + cur_count <= *lower_bound) {
+		std::size_t possible_count = count_possible(state);
+		if (lower_bound && possible_count + cur_count <= *lower_bound) {
 			// Compute explainaion: Last var that was assigned to a different value with the value in its domain
 			std::size_t explaination = 0;
 			std::size_t rank = 0;
 			for(std::size_t var : variables) {
 				if (state.assigned[var] && state.rank[var] > rank &&
+					is_value_in_domain(state.domains[var], value_index) &&
 					get_assigned_value(state.domains[var]) != value_index) {
 					explaination = var;
 					rank = state.rank[var];
 				}
 			}
 			for(std::size_t var : variables) {
-				if (!is_assigned(state, var)) {
-					BitsetDomain &domain = state.domains[var];
+				BitsetDomain &domain = state.domains[var];
+				if (!is_assigned(state, var) && (is_value_in_domain(domain, value_index) || possible_count + cur_count < *lower_bound)) {
 					memento.domain_mementos.push_back({var, remove_all_but_value(domain, value_index, explaination)});
 				}
 			}
