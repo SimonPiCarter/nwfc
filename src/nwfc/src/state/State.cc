@@ -117,16 +117,16 @@ bool backtrack(State &state) {
 
 bool backjump(State &state) {
 	// check if any domain has been emptied
-	bool backtrack = false;
+	bool has_backtrack = false;
 	for (std::size_t i = 0 ; i < state.domains.size() ; ++ i) {
 		if (is_empty(state.domains[i])) {
-			backtrack = true;
+			has_backtrack = true;
 			break;
 		}
 	}
 
 	std::size_t jump = state.affectation.size();
-	if (backtrack) {
+	if (has_backtrack) {
 		jump = get_jump(state);
 	}
 	DEBUG_LOG<<"jump: "<<jump<<std::endl;
@@ -147,10 +147,10 @@ bool backjump(State &state) {
 		}
 	}
 
-	if(backtrack) {
-		backjump(state);
+	if(has_backtrack) {
+		backtrack(state);
 	}
-	return backtrack;
+	return has_backtrack;
 }
 
 bool progress_and_backtrack(State &state, std::size_t var, std::size_t val) {
