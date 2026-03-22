@@ -1,8 +1,9 @@
 #pragma once
 
 #include <iostream>
+#include <sstream>
 
-struct NullLogger : std::ostream {
+struct NullLogger : std::stringstream {
     template<typename T>
     NullLogger& operator<<(const T&) {
         return *this;
@@ -21,7 +22,7 @@ private:
     static NullLogger instance;
 };
 
-//#define DEBUG_LEVEL
+// #define DEBUG_LEVEL
 
 #ifndef DEBUG_LEVEL
 #define DEBUG_LOG NullLogger::get_instance()

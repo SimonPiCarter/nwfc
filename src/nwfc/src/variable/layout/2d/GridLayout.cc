@@ -24,6 +24,7 @@ std::vector<CompatibilityBitset *> create_man_distance_incompatibilty_constraint
                     std::size_t ny = static_cast<int>(y) + dy;
                     for (std::size_t incompatible_value : val_in) {
                         incompatibilities.push_back({static_cast<std::size_t>(layout.get_index(nx, ny)), incompatible_value});
+                        constraints.push_back(new CompatibilityBitset(static_cast<std::size_t>(layout.get_index(nx, ny)), incompatible_value, {{index, value_index}}));
                     }
                 }
             }
