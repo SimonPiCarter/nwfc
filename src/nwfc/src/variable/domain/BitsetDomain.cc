@@ -103,7 +103,9 @@ std::size_t get_assigned_value(const BitsetDomain& domain) {
 	DEBUG_LOG << "get_assigned_value for domain "<< domain.id << std::endl;
 	display_bitset(DEBUG_LOG, domain.bits);
 	DEBUG_LOG<<std::endl;
-	throw std::runtime_error("Tried to get assigned value from empty domain");
+	// throw std::runtime_error("Tried to get assigned value from empty domain");
+	DEBUG_LOG<<"Tried to get assigned value from empty domain"<<std::endl;
+	return 0;
 }
 
 void display_domain(std::ostream &os, BitsetDomain const &domain) {

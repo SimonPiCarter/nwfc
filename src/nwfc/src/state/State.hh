@@ -17,7 +17,7 @@ struct StateMemento {
 struct State {
 	void init() {
 		if (assigned.size() < domains.size()) {
-			srand(42);
+			generator.seed(42);
 			assigned.resize(domains.size(), false);
 			rank.resize(domains.size(), 0);
 			mementos.resize(1, {0, {}});
@@ -31,6 +31,8 @@ struct State {
 
 	// mementos
 	std::list<StateMemento> mementos;
+
+    mutable std::mt19937 generator;
 };
 
 bool is_assigned(State const &state, std::size_t var);

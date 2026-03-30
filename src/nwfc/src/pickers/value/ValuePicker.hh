@@ -18,8 +18,8 @@ struct ConstantValuePicker : public ValuePicker {
 		if (is_value_in_domain(state.domains[var], value)) {
 			return value;
 		}
-		throw std::logic_error("Called pick constant value on a variable with incompatible domain");
-		// return greedy_pick_value(state, var);
+		//throw std::logic_error("Called pick constant value on a variable with incompatible domain");
+		return greedy_pick_value(state, var);
 	}
 };
 

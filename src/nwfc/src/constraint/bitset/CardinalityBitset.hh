@@ -42,7 +42,6 @@ struct CardinalityBitset : public Constraint {
 		}
 
 		auto &memento = state.mementos.back();
-		auto cur_value = get_assigned_value(state.domains[variable_assigned]);
 		auto cur_count = count(state);
 		if (upper_bound && cur_count >= *upper_bound) {
 			// Compute explainaion: Last var that was assigned to the value

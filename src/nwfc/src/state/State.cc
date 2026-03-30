@@ -9,18 +9,20 @@ namespace nwfc {
 
 bool is_assigned(State const &state, std::size_t var) {
 	if (state.assigned[var] != is_decided(state.domains[var])) {
-		throw std::runtime_error("Assigned status is inconcistent for var "+std::to_string(var));
+		// throw std::runtime_error("Assigned status is inconcistent for var "+std::to_string(var));
+		DEBUG_LOG<<("Assigned status is inconcistent for var "+std::to_string(var))<<std::endl;
 	}
 	return state.assigned[var];
 }
 
 void progress(State &state, std::size_t var, std::size_t val) {
-	INFO_LOG << "Progressing with variable " << var << " = " << val << std::endl;
+	DEBUG_LOG << "Progressing with variable " << var << " = " << val << std::endl;
 	state.init();
 	// push memento
 	state.mementos.push_back(StateMemento{state.mementos.size(), {}});
 	if (!is_value_in_domain(state.domains[var], val)) {
-		throw std::runtime_error("Tried to progress with a value not in domain");
+		// throw std::runtime_error("Tried to progress with a value not in domain");
+		DEBUG_LOG<<("Tried to progress with a value not in domain")<<std::endl;
 	}
 
 	auto &memento = state.mementos.back();
@@ -178,7 +180,9 @@ std::size_t greedy_pick_value(State const &state, std::size_t var) {
 			return i;
 		}
 	}
-	throw std::runtime_error("Tried to pick a value from an empty domain!");
+	// throw std::runtime_error("Tried to pick a value from an empty domain!");
+	DEBUG_LOG<<("Tried to pick a value from an empty domain!")<<std::endl;
+	return 0;
 }
 
 std::size_t random_pick_value(State const &state, std::size_t var) {
@@ -189,9 +193,12 @@ std::size_t random_pick_value(State const &state, std::size_t var) {
 		}
 	}
 	if (available_values.size() == 0) {
-		throw std::runtime_error("Tried to pick a value from an empty domain!");
+		// throw std::runtime_error("Tried to pick a value from an empty domain!");
+		DEBUG_LOG<<("Tried to pick a value from an empty domain!")<<std::endl;
+		return state.domains.size();
 	}
-	return available_values[rand() % available_values.size()];
+	std::uniform_int_distribution<> distrib(0, available_values.size()-1);
+	return available_values[distrib(state.generator)];
 }
 
 } // namespace nwfc

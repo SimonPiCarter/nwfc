@@ -27,7 +27,8 @@ struct ValueOrientedVariablePicker : public VariablePicker {
 				candidates.push_back(idx);
 			}
 		}
-		return candidates[rand() % candidates.size()];
+		std::uniform_int_distribution<> distrib(0, candidates.size()-1);
+		return candidates[distrib(state.generator)];
 	}
 
 	virtual ValuePicker* get_value_picker() override {
