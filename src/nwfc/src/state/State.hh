@@ -2,10 +2,10 @@
 
 #include "variable/domain/Domain.hh"
 #include "constraint/Constraint.hh"
+#include "utils/Random.hh"
 
 #include <list>
 #include <memory>
-#include <random>
 
 namespace nwfc {
 
@@ -32,7 +32,7 @@ struct State {
 	// mementos
 	std::list<StateMemento> mementos;
 
-    mutable std::mt19937 generator;
+    mutable NwfcRandom generator;
 };
 
 bool is_assigned(State const &state, std::size_t var);

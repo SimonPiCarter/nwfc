@@ -3,6 +3,7 @@ add_library(nwfc)
 
 target_sources(nwfc PRIVATE
 	src/utils/log/Log.cc
+	src/utils/Random.cc
 	src/pickers/value/WeightBasedValuePicker.cc
 	src/variable/domain/BitsetDomain.cc
 	src/variable/layout/2d/GridLayout.cc

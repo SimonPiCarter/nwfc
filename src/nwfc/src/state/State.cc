@@ -1,6 +1,5 @@
 #include "State.hh"
 
-#include <random>
 #include <stdexcept>
 #include <set>
 #include "utils/log/Log.hh"
@@ -197,8 +196,7 @@ std::size_t random_pick_value(State const &state, std::size_t var) {
 		DEBUG_LOG<<("Tried to pick a value from an empty domain!")<<std::endl;
 		return state.domains.size();
 	}
-	std::uniform_int_distribution<> distrib(0, available_values.size()-1);
-	return available_values[distrib(state.generator)];
+	return available_values[state.generator.next_int(0, available_values.size()-1)];
 }
 
 } // namespace nwfc

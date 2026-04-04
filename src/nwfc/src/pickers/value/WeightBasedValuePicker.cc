@@ -1,5 +1,4 @@
 #include "WeightBasedValuePicker.hh"
-#include <random>
 
 #include "state/State.hh"
 #include "utils/log/Log.hh"
@@ -35,8 +34,7 @@ std::size_t WeightBasedValuePicker::pick(State const &state, std::size_t var) {
 	}
 	DEBUG_LOG<<"prob_cardinality: "<<prob_cardinality<<std::endl;
 	DEBUG_LOG<<"alternatives_weight.size(): "<<alternatives_weight.size()<<std::endl;
-	std::uniform_int_distribution<> distrib(0, prob_cardinality-1);
-	auto prob = distrib(state.generator);
+	auto prob = state.generator.next_int(0, prob_cardinality-1);
 	DEBUG_LOG<<"prob: "<<prob<<std::endl;
 	std::size_t cur = 0;
 	while (cur < alternatives_weight.size() && prob > alternatives_weight[cur]) {
