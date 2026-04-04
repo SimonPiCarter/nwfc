@@ -7,6 +7,7 @@ target_sources(unit_tests PRIVATE
 	nwfc/variable/domain/BitsetDomain.test.cc
 	nwfc/constraint/AllDiff.test.cc
 	nwfc/constraint/Compat.test.cc
+	nwfc/constraint/ManhattanIncompat.test.cc
 	nwfc/state/ProgressBacktrack.test.cc
 	nwfc/state/ProgressBacjkump.test.cc
 )

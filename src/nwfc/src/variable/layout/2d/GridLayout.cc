@@ -34,6 +34,10 @@ std::vector<CompatibilityBitset *> create_man_distance_incompatibilty_constraint
     return constraints;
 }
 
+ManhattanIncompatibilityBitset *create_manhattan_incompatibility_constraint(GridLayout const &layout, int distance, std::size_t trigger_value, std::vector<std::size_t> incompatible_values) {
+    return new ManhattanIncompatibilityBitset(layout.width, layout.height, distance, trigger_value, incompatible_values);
+}
+
 void display_grid(GridLayout const &layout, State const &state) {
     for(std::size_t y = 0; y < layout.height; ++y) {
 		for(std::size_t x = 0; x < layout.width; ++x) {
