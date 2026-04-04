@@ -13,17 +13,17 @@ source ~/venv/bin/activate
 # First-time setup (from repo root)
 conan install . --output-folder=builds/Debug --build=missing
 
-# Configure & build
-cmake --preset conan-debug
-cmake --build builds/Debug
+# Configure & build (from builds/Debug)
+cmake ../.. -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_BUILD_TYPE=Debug
+cmake --build . --parallel
 
-# Run all tests
+# Run all tests (from root directory)
 ./builds/Debug/src/nwfc/test/unit_tests
 
 # Run a single test (GTest filter)
 ./builds/Debug/src/nwfc/test/unit_tests --gtest_filter=BitsetDomainTest.*
 
-# Run the demo executable
+# Run the demo executable (from root directory)
 ./builds/Debug/src/exe/exenwfc
 ```
 
