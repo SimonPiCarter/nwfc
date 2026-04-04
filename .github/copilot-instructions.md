@@ -11,7 +11,7 @@ Dependencies are managed with **Conan 2**, build files live in `builds/Debug/`.
 source ~/venv/bin/activate
 
 # First-time setup (from repo root)
-conan install . --output-folder=builds/Debug --build=missing
+conan install . --build=missing -of builds/Debug -s build_type=Debug -if builds/Debug/
 
 # Configure & build (from builds/Debug)
 cmake ../.. -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_BUILD_TYPE=Debug
