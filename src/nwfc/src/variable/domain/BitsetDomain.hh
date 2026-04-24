@@ -3,11 +3,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <limits>
 
 namespace nwfc {
 
 struct BitsetDomainMemento {
 	std::vector<bool> bits;
+	std::size_t removed_bit = std::numeric_limits<std::size_t>::max();
 };
 
 struct BitsetDomain {

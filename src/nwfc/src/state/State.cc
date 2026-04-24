@@ -7,10 +7,10 @@
 namespace nwfc {
 
 bool is_assigned(State const &state, std::size_t var) {
-	if (state.assigned[var] != is_decided(state.domains[var])) {
+	// if (state.assigned[var] != is_decided(state.domains[var])) {
 		// throw std::runtime_error("Assigned status is inconcistent for var "+std::to_string(var));
-		DEBUG_LOG<<("Assigned status is inconcistent for var "+std::to_string(var))<<std::endl;
-	}
+		// DEBUG_LOG<<("Assigned status is inconcistent for var "+std::to_string(var))<<std::endl;
+	// }
 	return state.assigned[var];
 }
 
@@ -21,11 +21,11 @@ void progress(State &state, std::size_t var, std::size_t val) {
 	state.mementos.push_back(StateMemento{state.mementos.size(), {}});
 	if (!is_value_in_domain(state.domains[var], val)) {
 		// throw std::runtime_error("Tried to progress with a value not in domain");
-		DEBUG_LOG<<("Tried to progress with a value not in domain")<<std::endl;
+		// DEBUG_LOG<<("Tried to progress with a value not in domain")<<std::endl;
 	}
 
 	auto &memento = state.mementos.back();
-	DEBUG_LOG<<"Memento idx: "<<memento.index<<std::endl;
+	// DEBUG_LOG<<"Memento idx: "<<memento.index<<std::endl;
 	assign_value(state.domains[var], val);
 	// update assigned vector
 	state.assigned[var] = true;

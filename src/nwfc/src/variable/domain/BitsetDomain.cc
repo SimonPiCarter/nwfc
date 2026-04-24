@@ -16,20 +16,21 @@ static void display_bitset(std::ostream &os, std::vector<bool> const &bitset) {
 }
 
 BitsetDomain::Memento remove_value(BitsetDomain& domain, std::size_t index, std::size_t explaination) {
-	DEBUG_LOG << "Removing value " << index << " from domain " << domain.id << std::endl;
+	// DEBUG_LOG << "Removing value " << index << " from domain " << domain.id << std::endl;
 	BitsetDomain::Memento memento;
-	memento.bits = domain.bits;
-	DEBUG_LOG << "  before: ";
-	display_bitset(DEBUG_LOG, domain.bits);
+	memento.removed_bit = index;
+	// memento.bits = domain.bits;
+	// DEBUG_LOG << "  before: ";
+	// display_bitset(DEBUG_LOG, domain.bits);
 	if (index < domain.bits.size()) {
 		if (domain.bits[index]) {
 			domain.explaination[index] = explaination;
 		}
 		domain.bits[index] = false;
 	}
-	DEBUG_LOG << "\n  after: ";
-	display_bitset(DEBUG_LOG, domain.bits);
-	DEBUG_LOG << std::endl;
+	// DEBUG_LOG << "\n  after: ";
+	// display_bitset(DEBUG_LOG, domain.bits);
+	// DEBUG_LOG << std::endl;
 	return memento;
 }
 
@@ -37,8 +38,8 @@ BitsetDomain::Memento remove_all_but_value(BitsetDomain& domain, std::size_t ind
 	DEBUG_LOG << "Removing all but value " << index << " from domain " << domain.id << std::endl;
 	BitsetDomain::Memento memento;
 	memento.bits = domain.bits;
-	DEBUG_LOG << "  before: ";
-	display_bitset(DEBUG_LOG, domain.bits);
+	// DEBUG_LOG << "  before: ";
+	// display_bitset(DEBUG_LOG, domain.bits);
 	for (std::size_t i = 1; i <= index; ++i) {
 		if (domain.bits[index-i]) {
 			domain.explaination[index-i] = explaination;
@@ -51,8 +52,8 @@ BitsetDomain::Memento remove_all_but_value(BitsetDomain& domain, std::size_t ind
 		}
 		domain.bits[i] = false;
 	}
-	DEBUG_LOG << "\n  after: ";
-	display_bitset(DEBUG_LOG, domain.bits);
+	// DEBUG_LOG << "\n  after: ";
+	// display_bitset(DEBUG_LOG, domain.bits);
 	DEBUG_LOG << std::endl;
 	return memento;
 }
@@ -76,12 +77,18 @@ bool is_empty(const BitsetDomain& domain) {
 void restore(BitsetDomain& domain, const BitsetDomain::Memento& memento) {
 	DEBUG_LOG << "Restoring domain "<< domain.id << std::endl;
 
-	DEBUG_LOG << "  before: ";
-	display_bitset(DEBUG_LOG, domain.bits);
-	domain.bits = memento.bits;
-	DEBUG_LOG << "\n  after: ";
-	display_bitset(DEBUG_LOG, domain.bits);
-	DEBUG_LOG << std::endl;
+	// DEBUG_LOG << "  before: ";
+	// display_bitset(DEBUG_LOG, domain.bits);
+	if (memento.bits.empty()) {
+		if (memento.removed_bit != std::numeric_limits<std::size_t>::max()) {
+			domain.bits[memento.removed_bit] = true;
+		}
+	} else {
+		domain.bits = memento.bits;
+	}
+	// DEBUG_LOG << "\n  after: ";
+	// display_bitset(DEBUG_LOG, domain.bits);
+	// DEBUG_LOG << std::endl;
 }
 
 BitsetDomain::Memento assign_value(BitsetDomain& domain, std::size_t index) {
@@ -100,11 +107,11 @@ std::size_t get_assigned_value(const BitsetDomain& domain) {
 	if (domain.value < domain.bits.size()) {
 		return domain.value;
 	}
-	DEBUG_LOG << "get_assigned_value for domain "<< domain.id << std::endl;
-	display_bitset(DEBUG_LOG, domain.bits);
-	DEBUG_LOG<<std::endl;
+	// DEBUG_LOG << "get_assigned_value for domain "<< domain.id << std::endl;
+	// display_bitset(DEBUG_LOG, domain.bits);
+	// DEBUG_LOG<<std::endl;
 	// throw std::runtime_error("Tried to get assigned value from empty domain");
-	DEBUG_LOG<<"Tried to get assigned value from empty domain"<<std::endl;
+	// DEBUG_LOG<<"Tried to get assigned value from empty domain"<<std::endl;
 	return 0;
 }
 
