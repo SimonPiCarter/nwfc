@@ -5,7 +5,8 @@
 
 namespace nwfc {
 struct ValueOrientedVariablePicker : public VariablePicker {
-	ValueOrientedVariablePicker(std::size_t count, std::size_t value) : _count(count), _value(value), value_picker(value) {}
+	ValueOrientedVariablePicker(std::size_t count, std::size_t value, std::vector<std::size_t> const &candidates = {})
+		: _count(count), _value(value), value_picker(value), _candidates(candidates) {}
 	bool is_done(State const &state) override {
 		std::size_t count = 0;
 		std::size_t alternatives = 0;
@@ -21,10 +22,19 @@ struct ValueOrientedVariablePicker : public VariablePicker {
 	}
 	std::size_t pick(State const &state) override {
 		std::vector<std::size_t> candidates;
-		for (std::size_t idx = 0 ; idx < state.domains.size() ; ++idx) {
-			auto &domain = state.domains[idx];
-			if (!is_decided(domain) && is_value_in_domain(domain, _value)) {
-				candidates.push_back(idx);
+		if (_candidates.empty()) {
+			for (std::size_t idx = 0 ; idx < state.domains.size() ; ++idx) {
+				auto &domain = state.domains[idx];
+				if (!is_decided(domain) && is_value_in_domain(domain, _value)) {
+					candidates.push_back(idx);
+				}
+			}
+		} else {
+			for(std::size_t idx : _candidates) {
+				auto &domain = state.domains[idx];
+				if (!is_decided(domain) && is_value_in_domain(domain, _value)) {
+					candidates.push_back(idx);
+				}
 			}
 		}
 		return candidates[state.generator.next_int(0, candidates.size()-1)];
@@ -37,5 +47,6 @@ private:
 	const std::size_t _count;
 	const std::size_t _value;
 	ConstantValuePicker value_picker;
+	std::vector<std::size_t> _candidates;
 };
 } // namespace nwfc
