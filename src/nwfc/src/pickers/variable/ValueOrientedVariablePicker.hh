@@ -18,9 +18,17 @@ struct ValueOrientedVariablePicker : public VariablePicker {
 				alternatives++;
 			}
 		}
-		return alternatives == 0 || _count <= count;
+		return alternatives == 0 || _count + _starting_count <= count;
 	}
 	std::size_t pick(State const &state) override {
+		if (!_init) {
+			for (auto &domain : state.domains) {
+				if (is_decided(domain) && get_assigned_value(domain) == _value) {
+					_starting_count++;
+				}
+			}
+			_init = true;
+		}
 		std::vector<std::size_t> candidates;
 		if (_candidates.empty()) {
 			for (std::size_t idx = 0 ; idx < state.domains.size() ; ++idx) {
@@ -44,6 +52,8 @@ struct ValueOrientedVariablePicker : public VariablePicker {
 		return &value_picker;
 	}
 private:
+	bool _init = false;
+	std::size_t _starting_count = 0;
 	const std::size_t _count;
 	const std::size_t _value;
 	ConstantValuePicker value_picker;
