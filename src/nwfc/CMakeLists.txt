@@ -10,6 +10,7 @@ target_sources(nwfc PRIVATE
 	src/state/State.cc
 )
 
+target_compile_definitions(nwfc PRIVATE _NOT_GODOT_BUILD_)
 target_include_directories(nwfc PUBLIC src/)
 
 add_subdirectory(test)
