@@ -24,7 +24,7 @@ void progress(State &state, std::size_t var, std::size_t val) {
 		// DEBUG_LOG<<("Tried to progress with a value not in domain")<<std::endl;
 	}
 
-	auto &memento = state.mementos.back();
+	// auto &memento = state.mementos.back();
 	// DEBUG_LOG<<"Memento idx: "<<memento.index<<std::endl;
 	assign_value(state.domains[var], val);
 	// update assigned vector
